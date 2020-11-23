@@ -14,7 +14,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Main extends JFrame {
-    private JButton startFireButton, sendHelpButton, clearButton, pauseButton, testButton;
+    private JButton startFireButton, sendHelpButton, clearButton, pauseButton, plantButton;
     private JCheckBox northBox, eastBox, southBox, westBox;
     private ButtonGroup checkBoxGroup;
     private JSlider humiditySlider;
@@ -33,6 +33,8 @@ public class Main extends JFrame {
         TestFunction tf = new TestFunction(dm);
         FireFunction ff = new FireFunction(dm);
 
+        is.setPicture(dm.binValue);
+
         //COLORS:
         /*System.out.println("RED: "+ dm.red);
         System.out.println("BLUE: "+ dm.blue);
@@ -43,12 +45,12 @@ public class Main extends JFrame {
 
         //buttons
         startFireButton = new JButton();
-        startFireButton.setText("<html><center>" + "start" + "<br>" + "forest fire" + "</center></html>");
+        startFireButton.setText("start forest fire");
         sendHelpButton = new JButton();
-        sendHelpButton.setText("<html><center>" + "call the" + "<br>" + "fire brigade" + "</center></html>");
+        sendHelpButton.setText("put out the fire");
         clearButton = new JButton("stop and clear");
         pauseButton = new JButton("pause");
-        testButton = new JButton("without parametrs");
+        plantButton = new JButton("plant new trees");
 
         //checkboxes & slider
         northBox = new JCheckBox("north");
@@ -79,7 +81,7 @@ public class Main extends JFrame {
         optionsPanel.setBorder(new TitledBorder(BorderFactory.createTitledBorder("options")));
         GridLayout gl = new GridLayout(12, 1);
         optionsPanel.setLayout(gl);
-        optionsPanel.setSize(80, 400);
+        optionsPanel.setSize(80, 440);
         optionsPanel.add(windLabel);
         optionsPanel.add(northBox);
         optionsPanel.add(eastBox);
@@ -91,11 +93,10 @@ public class Main extends JFrame {
         optionsPanel.add(sendHelpButton);
         optionsPanel.add(pauseButton);
         optionsPanel.add(clearButton);
-        //optionsPanel.add(testButton);
+        optionsPanel.add(plantButton);
 
 
         jImagePanel = new JImagePanel(dm);
-        is.setPicture(dm.binValue);
 
         mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
@@ -105,7 +106,7 @@ public class Main extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocation(300, 100);
         this.setContentPane(mainPanel);
-        this.setSize(new Dimension(780, 480));
+        this.setSize(new Dimension(780, 500));
         this.setResizable(false);
         this.setVisible(true);
 
@@ -227,16 +228,24 @@ public class Main extends JFrame {
         sendHelpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //
+                ff.putOutTheFire();
+                jImagePanel.repaint();
             }
         });
 
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 //dm.clickedstart = true;
 
+                /*for(int hi = 0; hi< 330; hi++ ) {
+                    for(int wi = 0; wi < 600; wi++) {
+                        ff.tabPixels[hi][wi] = 0;
+                    }
+                }*/
+
+                dm.blackpoints.clear();
+                ff.neighboursList.clear();
                 dm.directionOfWind = null;
                 dm.humidityValue = 0;
                 is.setPicture(dm.binValue);
@@ -244,7 +253,7 @@ public class Main extends JFrame {
             }
         });
 
-        testButton.addActionListener(new ActionListener() {
+        plantButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -252,10 +261,11 @@ public class Main extends JFrame {
                 executorService.scheduleAtFixedRate(new Runnable() {
                     @Override
                     public void run() {
-                        tf.functionWithoutParameters();
+                        //tf.functionWithoutParameters();
+                        ff.repairForest();
                         jImagePanel.repaint();
                     }
-                }, 0, 300, TimeUnit.MILLISECONDS);
+                }, 0, 100, TimeUnit.MILLISECONDS);
 
 
                 pauseButton.addActionListener(new ActionListener() {
