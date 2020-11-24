@@ -42,9 +42,7 @@ public class FireFunction {
 
         BufferedImage imageToChange = dm.image;
 
-        //zapisuje sobie kolory z aktualnego obrazka do tabeli, by potem powronywac kolory sasiadow itp z imagetochange - kopia oryginalnego obrazka
-        //int[][] tabPixels = new int[dm.image.getHeight()][dm.image.getWidth()];
-
+        //colors from picture are saveing to array
         for (int hi = 0; hi < dm.image.getHeight(); hi++) {
             for (int wi = 0; wi < dm.image.getWidth(); wi++) {
 
@@ -62,11 +60,13 @@ public class FireFunction {
                     tabPixels[hi][wi] = dm.greenLight;
                 } else if (colorMaybeRed == dm.yellow) {
                     tabPixels[hi][wi] = dm.yellow;
+                } else if (colorMaybeRed == dm.brown) {
+                    tabPixels[hi][wi] = dm.brown;
                 }
             }
         }
 
-        //szukam czerwonego punktu i dodaje do listy sasiadow wszystkich
+        //if we find red pixel we add its neighbours to the list in the addToListNeighbours function
         for (int hi = 0; hi < imageToChange.getHeight(); hi++) {
             for (int wi = 0; wi < imageToChange.getWidth(); wi++) {
 
@@ -76,7 +76,7 @@ public class FireFunction {
                 if (checkX > -1 && checkX < dm.image.getWidth()) {
                     if (checkY > -1 && checkY < dm.image.getHeight()) {
 
-                        if (tabPixels[hi][wi] == dm.red) {
+                        if (tabPixels[hi][wi] == dm.red || tabPixels[hi][wi] == dm.yellow) {
                             System.out.println("\t\tRED FOUND: x:" + wi + "\ty: " + hi);
                             addToListNeighbours(tabPixels, wi, hi, xmin, ymin, xmax, ymax);
 
@@ -86,10 +86,10 @@ public class FireFunction {
             }
         }
 
-        //do nowego obrazka zapisze sobie kolory przeszukane
+        //we create new image, where we will load new pixels' colors
         BufferedImage newimage = new BufferedImage(imageToChange.getWidth(), imageToChange.getHeight(), BufferedImage.TYPE_INT_RGB);
 
-        //ladowanie punktow ze zmienionej tablicy do obrazka na początku stałymi kolorami
+        //we load colors from array to the new image
         for (int hi = 0; hi < imageToChange.getHeight(); hi++) {
             for (int wi = 0; wi < imageToChange.getWidth(); wi++) {
                 if (tabPixels[hi][wi] == dm.red) {
@@ -104,12 +104,16 @@ public class FireFunction {
                     newimage.setRGB(wi, hi, dm.greenLight);
                 } else if (tabPixels[hi][wi] == dm.yellow) {
                     newimage.setRGB(wi, hi, dm.yellow);
+                } else if (tabPixels[hi][wi] == dm.brown) {
+                    newimage.setRGB(wi, hi, dm.brown);
                 }
             }
         }
 
-        // a teraz kolorujemy sąsiadow
+        // and load colors of found red point neighbours
         for (NeighbourTrees nt : neighboursList) {
+            Random rand = new Random();
+            int randVal = rand.nextInt(3);
             if (nt.color == dm.red) {
                 newimage.setRGB(nt.x, nt.y, dm.red);
             } else if (nt.color == dm.black) {
@@ -117,26 +121,31 @@ public class FireFunction {
             } else if (nt.color == dm.blue) {
                 newimage.setRGB(nt.x, nt.y, dm.blue);
             } else if (nt.color == dm.greenDark) {
-                newimage.setRGB(nt.x, nt.y, dm.red);
+                if(randVal == 0 || randVal == 1)
+                    newimage.setRGB(nt.x, nt.y, dm.red);
+                else
+                    newimage.setRGB(nt.x,nt.y,dm.yellow);
             } else if (nt.color == dm.greenLight) {
-                newimage.setRGB(nt.x, nt.y, dm.red);
+                if(randVal == 0 || randVal == 1)
+                    newimage.setRGB(nt.x, nt.y, dm.red);
+                else
+                    newimage.setRGB(nt.x,nt.y,dm.yellow);
             } else if (nt.color == dm.yellow) {
                 newimage.setRGB(nt.x, nt.y, dm.yellow);
+            } else if (nt.color == dm.brown) {
+                newimage.setRGB(nt.x, nt.y, dm.brown);
             }
         }
 
-        // robimy miejsce dla sasiadow w nastepnej turze
+        // clearing list of neighbours and load newimage to the basic image
         neighboursList.clear();
-
         dm.image = newimage;
 
     }
 
     void putOutTheFire() {
-        //jesli znajdzie czerwony punkt, to zamienia go na zolty.
 
-        //żółty do listy i z listy będe losować potem które drzewa ożyją
-
+        //if we find red or yellow point we change them to the brown color
         for (int hi = 0; hi < dm.image.getHeight(); hi++) {
             for (int wi = 0; wi < dm.image.getWidth(); wi++) {
                 int color = new Color(dm.image.getRGB(wi, hi)).getRGB();
@@ -145,19 +154,19 @@ public class FireFunction {
                 int los = rand.nextInt(3);
 
                 if (los == 1) {
-                    if (color == dm.red) {
-                        dm.image.setRGB(wi, hi, dm.yellow);
-                        tabPixels[hi][wi] = dm.yellow;
+                    if (color == dm.red || color == dm.yellow) {
+                        dm.image.setRGB(wi, hi, dm.brown);
+                        tabPixels[hi][wi] = dm.brown;
                     }
                 }
             }
         }
 
-
     }
 
     void repairForest() {
 
+        //black points are changing to the green
         int size = dm.blackpoints.size();
         Random rand = new Random();
         Points p = dm.blackpoints.get(rand.nextInt(size));
@@ -168,7 +177,6 @@ public class FireFunction {
             dm.image.setRGB(p.x, p.y, dm.greenDark);
             tabPixels[p.y][p.x] = dm.greenLight;
         }
-
 
     }
 }

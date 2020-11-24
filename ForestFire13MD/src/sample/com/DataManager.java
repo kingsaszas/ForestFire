@@ -16,15 +16,13 @@ public class DataManager
     int blue = new Color(0,88,222).getRGB();
     int red = new Color(155, 0, 0).getRGB();
     int black = new Color(30,25, 30).getRGB();
-    int yellow = new Color(220,145,0).getRGB();
+    int yellow = new Color(250,225,50).getRGB();
+    int brown  = new Color(139,69,19).getRGB();
 
     int humidityValue = 0;
     String directionOfWind = null;
 
     ArrayList<Points> blackpoints;
-
-    //boolean clickedstart = true;          //tylko jedno ognisko sobie ustawiam
-
 
     public DataManager() {
         blackpoints = new ArrayList<>();

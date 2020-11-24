@@ -29,8 +29,6 @@ public class Main extends JFrame {
         super(title);
         this.dm = new DataManager();
         ImageSettings is = new ImageSettings(dm);
-        //Functions f = new Functions(dm);
-        TestFunction tf = new TestFunction(dm);
         FireFunction ff = new FireFunction(dm);
 
         is.setPicture(dm.binValue);
@@ -159,7 +157,6 @@ public class Main extends JFrame {
         startFireButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //f.loadGreenTrees();
                 final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
                 executorService.scheduleAtFixedRate(new Runnable() {
                     @Override
@@ -236,14 +233,6 @@ public class Main extends JFrame {
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //dm.clickedstart = true;
-
-                /*for(int hi = 0; hi< 330; hi++ ) {
-                    for(int wi = 0; wi < 600; wi++) {
-                        ff.tabPixels[hi][wi] = 0;
-                    }
-                }*/
-
                 dm.blackpoints.clear();
                 ff.neighboursList.clear();
                 dm.directionOfWind = null;
@@ -261,7 +250,6 @@ public class Main extends JFrame {
                 executorService.scheduleAtFixedRate(new Runnable() {
                     @Override
                     public void run() {
-                        //tf.functionWithoutParameters();
                         ff.repairForest();
                         jImagePanel.repaint();
                     }
@@ -288,13 +276,11 @@ public class Main extends JFrame {
 
                 System.out.println("X: " + x + "\tY: " + y);
 
-                //if (dm.clickedstart)
                 is.setFire(x, y);
 
                 jImagePanel.repaint();
             }
         });
-
 
     }
 

@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Random;
 
 public class ImageSettings
@@ -60,12 +59,9 @@ public class ImageSettings
 
         if (x < dm.image.getWidth() && y < dm.image.getHeight()) {
             if (col != dm.blue) {
-                //dm.clickedstart = false;
                 dm.image.setRGB(x, y, dm.red);
             }
         }
-
-        //System.out.println(dm.clickedstart);
 
     }
 
